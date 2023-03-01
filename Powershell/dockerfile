@@ -1,0 +1,58 @@
+# escape=`
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+ARG registry=mcr.microsoft.com
+ARG repo=windows/server
+ARG tag=ltsc2022
+
+# Install PowerShell into WindowsServer
+FROM ${registry}/${repo}:${tag}
+
+ENV gitUsername=
+ENV gitEmailaddress=
+ENV gitHubUsername=
+
+# Stage1 add user
+ARG SSHUser=SSHUser
+
+RUN NET USER %SSHUser% /add && `
+    NET LOCALGROUP Administrators /add %SSHUser%
+# USER ${SSHUser}
+
+SHELL ["powershell.exe", "-ExecutionPolicy bypass", "-command"]
+
+
+# Stage2 install pwsh
+COPY install-pwsh.ps1 install-pwsh.ps1
+RUN ./install-pwsh.ps1;
+
+# Switch Shell
+SHELL ["pwsh.exe", "-ExecutionPolicy bypass", "-command"]
+
+# Stage3 install ssh under new user
+COPY install-openssh.ps1 install-openssh.ps1
+RUN C:/install-openssh.ps1;
+EXPOSE 22
+
+# Stage4 install vscode with extensions
+USER ${SSHUser}
+COPY install-vscodeserverAndExtensions.ps1 install-vscodeserverAndExtensions.ps1
+RUN ./install-vscodeserverAndExtensions.ps1 -extensions 'ms-vscode.powershell','TylerLeonhardt.vscode-inline-values-powershell','Gruntfuggly.todo-tree','streetsidesoftware.code-spell-checker';
+
+# Stage5 install choco,git and configure git
+USER ContainerAdministrator
+RUN iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'));`
+    choco install git --no-progress -yf;
+
+#copy Script module to import certificates from url. need this if you are working in damains with domain spesific certificates
+COPY ["install_certificate", "C:/Program Files/PowerShell/modules/install_certificate/"]
+COPY ["install_certificate", "C:/Program Files/WindowsPowerShell/modules/install_certificate/"]
+
+# add startup script
+USER ${SSHUser}
+COPY ./startup.ps1 startup.ps1
+
+ENTRYPOINT  & ./startup.ps1 &&
+CMD ping -t localhost
+

@@ -1,0 +1,42 @@
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '30 1 * * *'
+
+jobs:
+  build22:
+    runs-on: windows-2022
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Docker Login
+      uses: docker/login-action@v2.1.0
+      with:
+        username: ${{ secrets.DOCKERHUBUSER }}
+        password: ${{ secrets.DOCKERHUBPASSWORD }}
+       
+    - name: Build Docker Image 2022
+      working-directory: 'Powershell'
+      run: | 
+            docker build --isolation=process --build-arg tag=ltsc2022 --build-arg repo=windows/server --build-arg registry=mcr.microsoft.com -t macinally/winpwshdevcontainer:ltsc2022 -t macinally/winpwshdevcontainer:latest .
+            docker push --all-tags macinally/winpwshdevcontainer
+  build19:
+    runs-on: windows-2019
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Docker Login
+      uses: docker/login-action@v2.1.0
+      with:
+        username: ${{ secrets.DOCKERHUBUSER }}
+        password: ${{ secrets.DOCKERHUBPASSWORD }}
+       
+    - name: Build Docker Image 2019
+      working-directory: 'Powershell'
+      run: | 
+            docker build --isolation=process --build-arg tag=ltsc2019 --build-arg repo=windows --build-arg registry=mcr.microsoft.com -t macinally/winpwshdevcontainer:ltsc2019 .
+            docker push --all-tags macinally/winpwshdevcontainer
