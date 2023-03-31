@@ -45,10 +45,6 @@ USER ContainerAdministrator
 RUN iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'));`
     choco install git --no-progress -yf;
 
-#copy Script module to import certificates from url. need this if you are working in damains with domain spesific certificates
-COPY ["install_certificate", "C:/Program Files/PowerShell/modules/install_certificate/"]
-COPY ["install_certificate", "C:/Program Files/WindowsPowerShell/modules/install_certificate/"]
-
 # add startup script
 USER ${SSHUser}
 COPY ./startup.ps1 startup.ps1
