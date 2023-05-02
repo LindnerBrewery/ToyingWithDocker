@@ -16,7 +16,7 @@ ENV gitHubUsername=
 # Stage1 add user
 ARG SSHUser=SSHUser
 
-RUN NET USER %SSHUser% /add && \
+RUN NET USER %SSHUser% /add && `
     NET LOCALGROUP Administrators /add %SSHUser%
 # USER ${SSHUser}
 
@@ -42,7 +42,7 @@ RUN ./install-vscodeserverAndExtensions.ps1 -extensions 'ms-vscode.powershell','
 
 # Stage5 install choco,git and configure git
 USER ContainerAdministrator
-RUN iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'));\
+RUN iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'));`
     choco install git --no-progress -yf;
 
 # add startup script
