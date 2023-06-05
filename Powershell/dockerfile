@@ -5,7 +5,7 @@
 ARG registry=mcr.microsoft.com
 ARG repo=windows/server
 ARG tag=ltsc2022
-ARG chocolateyVersion=
+ARG chocoVersion=
 
 
 # Install PowerShell into WindowsServer
@@ -14,7 +14,7 @@ FROM ${registry}/${repo}:${tag}
 ENV gitUsername=
 ENV gitEmailaddress=
 ENV gitHubUsername=
-ENV chocolateyVersion=$chocolateyVersion
+ENV chocolateyVersion=$chocoVersion
 
 # Stage1 add user
 ARG SSHUser=SSHUser
@@ -24,7 +24,7 @@ RUN NET USER %SSHUser% /add && `
 # USER ${SSHUser}
 
 SHELL ["powershell.exe", "-ExecutionPolicy bypass", "-command"]
-
+RUN $env:chocolateyVersion
 
 # Stage2 install pwsh
 COPY install-pwsh.ps1 install-pwsh.ps1
