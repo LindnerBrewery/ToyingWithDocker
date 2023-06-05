@@ -23,7 +23,6 @@ RUN NET USER %SSHUser% /add && `
 # USER ${SSHUser}
 
 SHELL ["powershell.exe", "-ExecutionPolicy bypass", "-command"]
-RUN $env:chocolateyVersion
 
 # Stage2 install pwsh
 COPY install-pwsh.ps1 install-pwsh.ps1
