@@ -38,5 +38,5 @@ jobs:
     - name: Build Docker Image 2019
       working-directory: 'Powershell'
       run: | 
-            docker build --isolation=process --build-arg tag=ltsc2019 --build-arg repo=windows --build-arg registry=mcr.microsoft.com --build-arg chocoVersion=1.4.0 -t macinally/winpwshdevcontainer:ltsc2019 .
+            docker build --isolation=process --build-arg tag=ltsc2019 --build-arg repo=windows --build-arg registry=mcr.microsoft.com --build-arg chocolateyVersion=1.4.0 -t macinally/winpwshdevcontainer:ltsc2019 .
             docker push --all-tags macinally/winpwshdevcontainer
